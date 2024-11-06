@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.5.55">
+<meta name="generator" content="quarto-1.4.554">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -35,7 +35,7 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
   { counter-reset: source-line 0; }
@@ -90,7 +90,7 @@ div.csl-indent {
 <link href="index_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="index_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
 
-  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
 <script type="text/javascript">
@@ -130,9 +130,9 @@ window.Quarto = {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#the-case-of-pacific-northwest-forests" id="toc-the-case-of-pacific-northwest-forests" class="nav-link active" data-scroll-target="#the-case-of-pacific-northwest-forests">The case of Pacific Northwest Forests</a>
+  <li><a href="#the-case-of-pacific-northwest-forests" id="toc-the-case-of-pacific-northwest-forests" class="nav-link active" data-scroll-target="#the-case-of-pacific-northwest-forests">The case of Pacific Northwest Forests</a></li>
+  <li><a href="#building-a-markov-model" id="toc-building-a-markov-model" class="nav-link" data-scroll-target="#building-a-markov-model">Building a Markov model</a>
   <ul class="collapse">
-  <li><a href="#building-a-markov-model" id="toc-building-a-markov-model" class="nav-link" data-scroll-target="#building-a-markov-model">Building a Markov model</a></li>
   <li><a href="#matrix-projection" id="toc-matrix-projection" class="nav-link" data-scroll-target="#matrix-projection">Matrix Projection</a></li>
   <li><a href="#transition-matrix" id="toc-transition-matrix" class="nav-link" data-scroll-target="#transition-matrix">Transition Matrix</a></li>
   <li><a href="#markov-model" id="toc-markov-model" class="nav-link" data-scroll-target="#markov-model">Markov Model</a></li>
@@ -183,49 +183,49 @@ window.Quarto = {
 
 <section id="the-case-of-pacific-northwest-forests" class="level1">
 <h1>The case of Pacific Northwest Forests</h1>
-<p>Much debate over the management of Pacific Northwestern (PNW) forests occurred in the early 1990s. The debate centered on the effects of intensive logging on old-growth forests and on old-growth-dependent wildlife species such as the northern spotted owl (<em>Strix occidentalis</em>) and the marbled murrelet (<em>Brachyramphus marmoratus</em>) (<span class="citation" data-cites="hansen1991">Hansen et al. (<a href="#ref-hansen1991" role="doc-biblioref">1991</a>)</span>, <span class="citation" data-cites="ruggiero1991">Pacific Northwest Research Station (Portland and Ruggiero (<a href="#ref-ruggiero1991" role="doc-biblioref">1991</a>)</span>), primarily on U.S. Forest Service land. Since most of the old-growth on private lands was already gone, most of the old-growth harvested in the 1980s came from these federal lands (<span class="citation" data-cites="harris1984">Harris (<a href="#ref-harris1984" role="doc-biblioref">1984</a>)</span>, <span class="citation" data-cites="robbins2011">Robbins (<a href="#ref-robbins2011" role="doc-biblioref">2011</a>)</span>). By the mid-1990s, harvest was reduced by over 90% on federal lands relative to the peak harvests of the late 1980s (<span class="citation" data-cites="marcot1997">Marcot (<a href="#ref-marcot1997" role="doc-biblioref">1997</a>)</span>). A central question during this time was how long can current rates of harvest be sustained before the old growth is virtually gone?</p>
+<p>Much debate over the management of Pacific Northwestern (PNW) forests occurred in the early 1990s. The debate centered on the effects of intensive logging on old-growth forests and on old-growth-dependent wildlife species such as the northern spotted owl (<em>Strix occidentalis</em>) and the marbled murrelet (<em>Brachyramphus marmoratus</em>) (<span class="citation" data-cites="hansen1991">Hansen et al. (<a href="#ref-hansen1991" role="doc-biblioref">1991</a>)</span>, <span class="citation" data-cites="ruggiero1991">Ruggiero (<a href="#ref-ruggiero1991" role="doc-biblioref">1991</a>)</span>), primarily on U.S. Forest Service land. Since most of the old-growth on private lands was already gone, most of the old-growth harvested in the 1980s came from these federal lands (<span class="citation" data-cites="harris1984">Harris (<a href="#ref-harris1984" role="doc-biblioref">1984</a>)</span>, <span class="citation" data-cites="robbins2011">Robbins (<a href="#ref-robbins2011" role="doc-biblioref">2011</a>)</span>). By the mid-1990s, harvest was reduced by over 90% on federal lands relative to the peak harvests of the late 1980s (<span class="citation" data-cites="marcot1997">Marcot (<a href="#ref-marcot1997" role="doc-biblioref">1997</a>)</span>). A central question during this time was how long can current rates of harvest be sustained before the old growth is virtually gone?</p>
 <p>The Oregon Cascades were at the center of this debate over the management of PNW forests. This area is on federally managed lands where timber harvesting has been conducted using a dispersed (staggered setting) system of 10-20 ha clear-cut patches. The rate and pattern of these disturbances is somewhat different than those on private lands (<span class="citation" data-cites="spies1994">Spies, Ripple, and Bradshaw (<a href="#ref-spies1994" role="doc-biblioref">1994</a>)</span>) and is quite different than disturbances generated by wildfire during the pre-settlement era (<span class="citation" data-cites="wallin1996">Wallin et al. (<a href="#ref-wallin1996" role="doc-biblioref">1996</a>)</span>). Spatial data for this area were derived from Landsat Thematic Mapper data using methods outlined in <span class="citation" data-cites="cohen1995">Cohen, Spies, and Fiorella (<a href="#ref-cohen1995" role="doc-biblioref">1995</a>)</span>, <span class="citation" data-cites="cohen1998">Cohen et al. (<a href="#ref-cohen1998" role="doc-biblioref">1998</a>)</span>, <span class="citation" data-cites="cohen2002">Cohen et al. (<a href="#ref-cohen2002" role="doc-biblioref">2002</a>)</span>, and <span class="citation" data-cites="wallin1997">Wallin et al. (<a href="#ref-wallin1997" role="doc-biblioref">1997</a>)</span>. Forest cover was classified into six approximate age classes (<a href="#tbl-covers" class="quarto-xref">Table&nbsp;1</a>) at 200 random locations based on a Landsat imagery from 1972. The cover type at each of these locations was tallied at time 1 (1972), 2 (1984), and 3 (1991) on the three Landsat scenes. This information is tallied in columns in the spreadsheet <strong>sample200.csv</strong>.</p>
-<div id="tbl-covers" class="quarto-float quarto-figure quarto-figure-center anchored">
+<div id="tbl-covers" class="quarto-float anchored">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-covers-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Table&nbsp;1: Definition of cover types in the Pacific Northwestern forest landscape.
 </figcaption>
 <div aria-describedby="tbl-covers-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<table class="caption-top">
+<table class="table">
 <thead>
-<tr>
+<tr class="header">
 <th>Class</th>
 <th>Age (yr)</th>
 <th>Cover Type</th>
 </tr>
 </thead>
 <tbody>
-<tr>
+<tr class="odd">
 <td>0</td>
 <td>Background</td>
 <td>(Non forest)</td>
 </tr>
-<tr>
+<tr class="even">
 <td>1</td>
 <td>0-20</td>
 <td>Recent clear-cut</td>
 </tr>
-<tr>
+<tr class="odd">
 <td>2</td>
 <td>21-40</td>
 <td>Early seral</td>
 </tr>
-<tr>
+<tr class="even">
 <td>3</td>
 <td>41-80</td>
 <td>Mid seral</td>
 </tr>
-<tr>
+<tr class="odd">
 <td>4</td>
 <td>81-170</td>
 <td>Mature</td>
 </tr>
-<tr>
+<tr class="even">
 <td>5</td>
 <td>&gt;170</td>
 <td>Old growth</td>
@@ -235,10 +235,11 @@ Table&nbsp;1: Definition of cover types in the Pacific Northwestern forest lands
 </div>
 </figure>
 </div>
-<section id="building-a-markov-model" class="level2">
-<h2 class="anchored" data-anchor-id="building-a-markov-model">Building a Markov model</h2>
-<p>In this part of the lab, you will build a simple Markov model of landscape change, evaluate it, and use it as a point of departure to consider more realistic (but more complicated) models. Raster maps of Pacific Northwest forests are compared over three time periods to summarize the rates of transition between cover types. A simple model of landscape change is built from these transition probabilities. Lastly, this model is projected forward in time to verify and validate the model.</p>
-<p>Let’s begin by importing the libraries we will need. On top of that, note how we are sourcing external files containing functions we will need later. This is a common practice in case you have custom functions you need to use in multiple projects. By storing them on an external file you don’t have to re-write them every time you start a new analysis.</p>
+</section>
+<section id="building-a-markov-model" class="level1">
+<h1>Building a Markov model</h1>
+<p>One common way to study temporal changes in the landscape is via a <strong>Markov model</strong>. In this part of the lab, you will build a simple Markov model of landscape change, evaluate it, and use it as a point of departure to consider more realistic (but more complicated) models. Raster maps of Pacific Northwest forests are compared over three time periods to summarize the rates of transition between cover types. A simple model of landscape change is built from these transition probabilities. Lastly, this model is projected forward in time to verify and validate the model. Remember that a Markov model is such that, given an initial state <span class="math inline">\(x_t = [x_1, x_2, x_3, ..., x_n]\)</span> and a transition matrix of probabilities <span class="math inline">\(P\)</span>, <span class="math inline">\(x_{t+1} = x_t * P\)</span>.</p>
+<p>Let’s begin by importing the libraries we will need. On top of that, note how we are sourcing external files containing functions we will need later on. This is a common practice in case you have custom functions you need to use in multiple projects. By storing them on a external files you don’t have to re-write the function every time you start a new project.</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
@@ -273,7 +274,7 @@ Table&nbsp;1: Definition of cover types in the Pacific Northwestern forest lands
 6      6     5     1     1</code></pre>
 </div>
 </div>
-<div id="fig-gif" class="quarto-float quarto-figure quarto-figure-center anchored">
+<div id="fig-gif" class="quarto-figure quarto-figure-center quarto-float anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-gif-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="data/pnw-change.gif" class="img-fluid figure-img">
@@ -283,10 +284,9 @@ Figure&nbsp;1: Change in cover types from 1972, 1984, to 1991.
 </figcaption>
 </figure>
 </div>
-</section>
 <section id="matrix-projection" class="level2">
 <h2 class="anchored" data-anchor-id="matrix-projection">Matrix Projection</h2>
-<p>As we learned in the first part of the lab, we construct a <strong>transition matrix</strong> to determine how the landscape will change over 2 time periods. However, let’s start by observing how the proportion of landscape classes varies over time to get a better sense of what we are dealing with.</p>
+<p>As we discussed in the first part of the lab, we construct a <strong>transition matrix</strong> to determine how the landscape will change over 2 time periods. However, let’s start by observing how the proportion of landscape classes varies over time to get a better sense of what we are dealing with.</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
@@ -294,15 +294,15 @@ Figure&nbsp;1: Change in cover types from 1972, 1984, to 1991.
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co"># 1972</span></span>
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>t1972 <span class="ot">&lt;-</span> <span class="fu">table</span>(<span class="fu">as.factor</span>(data<span class="sc">$</span>y1972)) <span class="co"># tally of each cover type</span></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>p1972 <span class="ot">&lt;-</span> t1972<span class="sc">/</span>n_samples <span class="co"># proportion of each cover class</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>p1972 <span class="ot">&lt;-</span> t1972 <span class="sc">/</span> n_samples <span class="co"># proportion of each cover class</span></span>
 <span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="co"># 1984</span></span>
 <span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>t1984 <span class="ot">&lt;-</span> <span class="fu">table</span>(<span class="fu">as.factor</span>(data<span class="sc">$</span>y1984))</span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>p1984 <span class="ot">&lt;-</span> t1984<span class="sc">/</span>n_samples</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>p1984 <span class="ot">&lt;-</span> t1984 <span class="sc">/</span> n_samples</span>
 <span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="co"># 1991</span></span>
 <span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>t1991 <span class="ot">&lt;-</span> <span class="fu">table</span>(<span class="fu">as.factor</span>(data<span class="sc">$</span>y1991))</span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>p1991 <span class="ot">&lt;-</span> t1991<span class="sc">/</span>n_samples</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>p1991 <span class="ot">&lt;-</span> t1991 <span class="sc">/</span> n_samples</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <p>As a second step, we initialize the <strong>transition vector</strong> using the proportion of cover types in the first year (1972). We then construct a matrix with the proportion of each cover type per year (<a href="#tbl-props" class="quarto-xref">Table&nbsp;2</a>).</p>
@@ -319,7 +319,7 @@ Figure&nbsp;1: Change in cover types from 1972, 1984, to 1991.
 <span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>props</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
-<div id="tbl-props" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<div id="tbl-props" class="cell quarto-float anchored">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-props-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Table&nbsp;2: Initial class proportions in 1972, 1984, and 1991.
@@ -350,7 +350,7 @@ Table&nbsp;2: Initial class proportions in 1972, 1984, and 1991.
 <span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<div id="fig-props" class="quarto-float quarto-figure quarto-figure-center anchored">
+<div id="fig-props" class="quarto-figure quarto-figure-center quarto-float anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-props-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="index_files/figure-html/fig-props-1.png" class="img-fluid figure-img" width="672">
@@ -367,7 +367,7 @@ Figure&nbsp;2: Change in the proportion of cover types from 1972, 1984, to 1991.
 <h2 class="anchored" data-anchor-id="transition-matrix">Transition Matrix</h2>
 <p>It’s now time to build our transition matrices for the years 1972 -&gt; 1984 and 1984 -&gt; 1991! A transition matrix <span class="math inline">\(M\)</span> is built on top of a tally matrix and dividing each element by the row total. Here, a tally matrix simply counts how many times a cover type in one year (<span class="math inline">\(n_i\)</span>) changed into another type in another year (<span class="math inline">\(n_j\)</span>). For example, we count how many times C1 in 1972 became C2…C5 in 1984 and similarly for the period 1984-1991. Therefore, each cell in the transition matrix can be represented as <span class="math inline">\(n_{ij}\)</span>, where <span class="math inline">\(i\)</span> is the old class and <span class="math inline">\(j\)</span> is the new class.</p>
 <p>We can then convert our transition matrix (i.e.&nbsp;a tally matrix of <span class="math inline">\(n_{ij}\)</span>, <a href="#tbl-tm11" class="quarto-xref">Table&nbsp;3</a>) into proportions of cells of each cover type that changed into another cover type during that time interval (<span class="math inline">\(P\)</span>, <a href="#tbl-tm12" class="quarto-xref">Table&nbsp;4</a>, <a href="#tbl-tm2" class="quarto-xref">Table&nbsp;5</a>). This should give us a better sense of how much of each class changed. Remember that the diagonal elements <span class="math inline">\(p_{ii}\)</span> are the class proportions that did not change.</p>
-<p>Let’s build <span class="math inline">\(P\)</span> for each time internal. Here, we will use the function <code>rel</code> and <code>fix.steps</code> from the files we sourced earlier, which would help us streamline the build-up of the matrix <span class="math inline">\(P\)</span>. Also, note that we are interested in extracting the transition matrix describing annual changes in class proportions. If we considered the change from 1972 to 1984, we would end up with a transition matrix describing changes over 12 years. To fix that, we have divide the off-diagonal cells (<span class="math inline">\(p_{ij}\)</span>) by the original time frame (12 or 7 years) and adjust the diagonal elements to be <span class="math inline">\(1 - \sum_{j = 1}^{n}p_{ij}\)</span>. That is, make sure the row sum is equal to 1.</p>
+<p>Let’s build <span class="math inline">\(P\)</span> for each time internal. Here, we will use the function <code>rel</code> and <code>fix.steps</code> from the files we sourced earlier, which would help us streamline the building of the matrix <span class="math inline">\(P\)</span>. Also, note that we are interested in extracting the transition matrix describing annual changes in class proportions. If we considered the change from 1972 to 1984, we would end up with a transition matrix describing changes over 12 years. To fix that, we have divide the off-diagonal cells (<span class="math inline">\(p_{ij}\)</span>) by the original time frame (12 or 7 years) and adjust the diagonal elements to be <span class="math inline">\(1 - \sum_{j = 1}^{n}p_{ij}\)</span>. That is, make sure the row sum is equal to 1.</p>
 <p><strong>1972-1984</strong></p>
 <details class="code-fold">
 <summary>Code</summary>
@@ -375,7 +375,7 @@ Figure&nbsp;2: Change in the proportion of cover types from 1972, 1984, to 1991.
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>t7284 <span class="ot">&lt;-</span> <span class="fu">table</span>(data<span class="sc">$</span>y1972, data<span class="sc">$</span>y1984)</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>t7284 </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
-<div id="tbl-tm11" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<div id="tbl-tm11" class="cell quarto-float anchored">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-tm11-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Table&nbsp;3: Tally matrix for the years 1972 to 1984.
@@ -403,7 +403,7 @@ Table&nbsp;3: Tally matrix for the years 1972 to 1984.
 <span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>P <span class="sc">%&gt;%</span> <span class="fu">round</span>(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
-<div id="tbl-tm12" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<div id="tbl-tm12" class="cell quarto-float anchored">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-tm12-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Table&nbsp;4: Transition matrix for the years 1972 to 1984 in annual time steps.
@@ -430,7 +430,7 @@ Table&nbsp;4: Transition matrix for the years 1972 to 1984 in annual time steps.
 <span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>P8491 <span class="sc">%&gt;%</span> <span class="fu">round</span>(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
-<div id="tbl-tm2" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<div id="tbl-tm2" class="cell quarto-float anchored">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-tm2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Table&nbsp;5: Transition matrix for the years 1984 to 1991 in annual time steps.
@@ -452,7 +452,7 @@ Table&nbsp;5: Transition matrix for the years 1984 to 1991 in annual time steps.
 <section id="markov-model" class="level2">
 <h2 class="anchored" data-anchor-id="markov-model">Markov Model</h2>
 <p>At this point, we have everything we need to build our first-order Markov model! A first-order Markov model assumes that to predict the state of the system at time <span class="math inline">\(t + 1\)</span>, one need only know the state of the system at time <span class="math inline">\(t\)</span> (<span class="citation" data-cites="usher1992">Usher (<a href="#ref-usher1992" role="doc-biblioref">1992</a>)</span>). The core of a Markov model is the transition matrix <span class="math inline">\(P\)</span>, which summarizes the probability that a cell of cover type <span class="math inline">\(i\)</span> will change to cover type <span class="math inline">\(j\)</span> during a single timestep. The timestep is the interval over which the data were observed to change (i.e., the time interval of the two maps, in our case fixed to 1 year).</p>
-<p>To explore a Markov model, it is initialized with a state vector and then projected for one or more timesteps. The vector of cover types produced at each iteration is the prediction of overall landscape composition for that timestep. We start by building a matrix which will contain the proportion of classes for each year throughout the length of the projection (999 years).</p>
+<p>To explore a Markov model, we initialized a state vector and we’ll then project that for one or more timesteps based on <span class="math inline">\(P\)</span>. The vector of cover types produced at each iteration is the prediction of overall landscape composition for that timestep. We start by building a matrix which will contain the proportion of classes for each year throughout the length of the projection (999 years).</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
@@ -477,7 +477,7 @@ Table&nbsp;5: Transition matrix for the years 1984 to 1991 in annual time steps.
 <span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a>out <span class="ot">&lt;-</span> <span class="fu">rbind</span>(<span class="fu">c</span>(begin, inits), out)</span>
 <span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb14-21"><a href="#cb14-21" aria-hidden="true" tabindex="-1"></a><span class="co"># create labels for the output columns:</span></span>
-<span id="cb14-22"><a href="#cb14-22" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(out)<span class="ot">&lt;-</span><span class="fu">c</span>(<span class="st">"Year"</span>, <span class="fu">paste</span>(<span class="st">"C"</span>, <span class="fu">as.character</span>(<span class="dv">1</span><span class="sc">:</span>ntypes), <span class="at">sep=</span><span class="st">""</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb14-22"><a href="#cb14-22" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(out) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Year"</span>, <span class="fu">paste</span>(<span class="st">"C"</span>, <span class="fu">as.character</span>(<span class="dv">1</span><span class="sc">:</span>ntypes), <span class="at">sep=</span><span class="st">""</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <p>We now validate the model to make sure it’s working as expected. To do that, we can have a quick look at the projection and overlay the actual class proportions we have for the 3 years. However, remember that this is not ideal because our projection runs for almost 1000 years! So, let’s start plotting the actual projection for the year 1972 to 1995 and see what it looks like (<a href="#fig-valid" class="quarto-xref">Figure&nbsp;3</a>).</p>
@@ -497,7 +497,7 @@ Table&nbsp;5: Transition matrix for the years 1984 to 1991 in annual time steps.
 <span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>p1</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<div id="fig-valid" class="quarto-float quarto-figure quarto-figure-center anchored">
+<div id="fig-valid" class="quarto-figure quarto-figure-center quarto-float anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-valid-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="index_files/figure-html/fig-valid-1.png" class="img-fluid figure-img" width="672">
@@ -510,7 +510,7 @@ Figure&nbsp;3: Simulated landscape class changes between 1972 and 1995. Points r
 </div>
 </div>
 <p><strong><em>Question 1. How does the model perform compared to the data? Does this differ by timestep (1972-1984, 1984-1991)?</em></strong></p>
-<p>Now, let’s observe the entire simulation until the year 2971 (<a href="#fig-sim" class="quarto-xref">Figure&nbsp;4</a>).</p>
+<p>Below you can see the entire simulation until the year 2971 (end of the projection) (<a href="#fig-sim" class="quarto-xref">Figure&nbsp;4</a>).</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
@@ -520,7 +520,7 @@ Figure&nbsp;3: Simulated landscape class changes between 1972 and 1995. Points r
 <span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>p2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<div id="fig-sim" class="quarto-float quarto-figure quarto-figure-center anchored">
+<div id="fig-sim" class="quarto-figure quarto-figure-center quarto-float anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-sim-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="index_files/figure-html/fig-sim-1.png" class="img-fluid figure-img" width="672">
@@ -535,8 +535,8 @@ Figure&nbsp;4: Simulated landscape class changes between 1972 and 2971.
 </section>
 <section id="alternative-management-scenarios" class="level2">
 <h2 class="anchored" data-anchor-id="alternative-management-scenarios">Alternative Management Scenarios</h2>
-<p>The power of the simulation does end here. For example, we can test how alternative management scenario may affect the class proportions in the long run. Imagine a new policy has implemented a reduction by half of the annual allowable cut. That mean we can only harvest as much as we did last year. What would happen to the class proportion in 1000 years?</p>
-<p>To do that, we have to manually adjust <span class="math inline">\(P\)</span> to reflect a reduction in the harvesting rate, and therefore an increase in initial proportions for the other cover types. In particular, let’s assume that by reducing harvesting we would have higher initial mature and old growth classes. We can therefore adjust <span class="math inline">\(P\)</span> accordingly as follows (<a href="#tbl-alt1" class="quarto-xref">Table&nbsp;6</a>).</p>
+<p>The power of the simulation does not end here. For example, we can test how alternative management scenario may affect the class proportions in the long run. Imagine a new policy has implemented a reduction by half of the annual allowable cut. That means we can only harvest half of what we did last year. What would happen to the class proportion in 1000 years?</p>
+<p>To do that, we have to manually adjust <span class="math inline">\(P\)</span> to reflect a reduction in the harvesting rate, and therefore an increase in initial proportions for the other cover types. In particular, let’s assume that by reducing harvesting we would have higher initial mature and old growth classes. We can therefore adjust <span class="math inline">\(P\)</span> accordingly, as follows (<a href="#tbl-alt1" class="quarto-xref">Table&nbsp;6</a>).</p>
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># start with the same probabilities as before</span></span>
@@ -619,7 +619,7 @@ Table&nbsp;6: Transition matrices for the years 1972 to 1984 in annual time step
 <span id="cb20-26"><a href="#cb20-26" aria-hidden="true" tabindex="-1"></a>p3</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<div id="fig-sim2" class="quarto-float quarto-figure quarto-figure-center anchored">
+<div id="fig-sim2" class="quarto-figure quarto-figure-center quarto-float anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-sim2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="index_files/figure-html/fig-sim2-1.png" class="img-fluid figure-img" width="672">
@@ -638,7 +638,7 @@ Figure&nbsp;5: Simulated landscape class changes between 1972 and 2971 using a h
 <div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>p2 <span class="sc">/</span> p3</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<div id="fig-t" class="quarto-float quarto-figure quarto-figure-center anchored">
+<div id="fig-t" class="quarto-figure quarto-figure-center quarto-float anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-t-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="index_files/figure-html/fig-t-1.png" class="img-fluid figure-img" width="672">
@@ -667,7 +667,7 @@ Figure&nbsp;6: Comparison of Markov projections for 2 management scenarios.
 <span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<div id="fig-compare" class="quarto-float quarto-figure quarto-figure-center anchored">
+<div id="fig-compare" class="quarto-figure quarto-figure-center quarto-float anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-compare-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="index_files/figure-html/fig-compare-1.png" class="img-fluid figure-img" width="672">
@@ -685,8 +685,8 @@ Figure&nbsp;7: Comparison of old-growth proportion under 2 different management 
 </section>
 <section id="part-3.-your-turn" class="level1">
 <h1>Part 3. Your turn!</h1>
-<p>We explored the use of alternative management scenarios and how these affect the class proportions over time. For this part, run an alternative management scenario that allows you to retain <em>30% of old growth</em> forest at the end of the century. What other class proportions would you need to change in order to attain this management goal? Feel free to re-use the provided code or write your own implementation (whichever programming language you prefer).</p>
-<p><strong><em>Question 5. Upon completion of your scenarios, submit your plotted simulation. Briefly use bullet point to list what assumption you had to make when developing a simple first-order Markov model?</em></strong></p>
+<p>We explored the use of alternative management scenarios and how these affect the class proportions over time. For this part, run an alternative management scenario that allows you to retain <strong>30% of old growth</strong> forest at the end of the century. What other class proportions would you need to change in order to attain this management goal? Feel free to re-use the provided code or write your own implementation (whichever programming language you prefer).</p>
+<p><strong><em>Question 5. Upon completion of your scenarios, submit your plotted simulation. Briefly use bullet point to list what assumptions you had to make when developing a simple first-order Markov model?</em></strong></p>
 </section>
 <section id="conclusions" class="level1">
 <h1>Conclusions</h1>
@@ -712,11 +712,11 @@ Harris, Larry D. 1984. <em>The Fragmented Forest: Island Biogeography Theory and
 <div id="ref-marcot1997" class="csl-entry" role="listitem">
 Marcot, Bruce G. 1997. <em>Of Spotted Owls, Old Growth, and New Policies: A History Since the Interagency Scientific Committee Report</em>. Vol. 408. US Department of Agriculture, Forest Service, Pacific Northwest Research Station.
 </div>
-<div id="ref-ruggiero1991" class="csl-entry" role="listitem">
-Pacific Northwest Research Station (Portland, Or.), and Leonard F Ruggiero. 1991. <em>Wildlife and Vegetation of Unmanaged Douglas-Fir Forests</em>. The Station.
-</div>
 <div id="ref-robbins2011" class="csl-entry" role="listitem">
 Robbins, William G. 2011. <em>Hard Times in Paradise: Coos Bay, Oregon</em>. University of Washington Press.
+</div>
+<div id="ref-ruggiero1991" class="csl-entry" role="listitem">
+Ruggiero, Leonard F. 1991. <em>Wildlife and Vegetation of Unmanaged Douglas-Fir Forests</em>. The Station.
 </div>
 <div id="ref-spies1994" class="csl-entry" role="listitem">
 Spies, Thomas A, William J Ripple, and GA Bradshaw. 1994. <span>“Dynamics and Pattern of a Managed Coniferous Forest Landscape in Oregon.”</span> <em>Ecological Applications</em> 4 (3): 555–68.
@@ -771,7 +771,18 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }
     return false;
   }
-  const onCopySuccess = function(e) {
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
     // button target
     const button = e.trigger;
     // don't keep focus
@@ -803,29 +814,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }, 1000);
     // clear code selection
     e.clearSelection();
-  }
-  const getTextToCopy = function(trigger) {
-      const codeEl = trigger.previousElementSibling.cloneNode(true);
-      for (const childEl of codeEl.children) {
-        if (isCodeAnnotation(childEl)) {
-          childEl.remove();
-        }
-      }
-      return codeEl.innerText;
-  }
-  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
-    text: getTextToCopy
   });
-  clipboard.on('success', onCopySuccess);
-  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
-    // For code content inside modals, clipBoardJS needs to be initialized with a container option
-    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
-    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
-      text: getTextToCopy,
-      container: window.document.getElementById('quarto-embedded-source-code-modal')
-    });
-    clipboardModal.on('success', onCopySuccess);
-  }
     var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
     var mailtoRegex = new RegExp(/^mailto:/);
       var filterRegex = new RegExp('/' + window.location.host + '/');
@@ -833,7 +822,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
         return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
     }
     // Inspect non-navigation links and adorn them if external
- 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
     for (var i=0; i<links.length; i++) {
       const link = links[i];
       if (!isInternal(link.href)) {

@@ -34,11 +34,11 @@ The Oregon Cascades were at the center of this debate over the management of PNW
 | 5     | \>170      | Old growth       |
 : Definition of cover types in the Pacific Northwestern forest landscape. {#tbl-covers}
 
-## Building a Markov model
+# Building a Markov model
 
-In this part of the lab, you will build a simple Markov model of landscape change, evaluate it, and use it as a point of departure to consider more realistic (but more complicated) models. Raster maps of Pacific Northwest forests are compared over three time periods to summarize the rates of transition between cover types. A simple model of landscape change is built from these transition probabilities. Lastly, this model is projected forward in time to verify and validate the model. 
+One common way to study temporal changes in the landscape is via a **Markov model**. In this part of the lab, you will build a simple Markov model of landscape change, evaluate it, and use it as a point of departure to consider more realistic (but more complicated) models. Raster maps of Pacific Northwest forests are compared over three time periods to summarize the rates of transition between cover types. A simple model of landscape change is built from these transition probabilities. Lastly, this model is projected forward in time to verify and validate the model. Remember that a Markov model is such that, given an initial state $x_t = [x_1, x_2, x_3, ..., x_n]$ and a transition matrix of probabilities $P$, $x_{t+1} = x_t * P$.
 
-Let's begin by importing the libraries we will need. On top of that, note how we are sourcing external files containing functions we will need later. This is a common practice in case you have custom functions you need to use in multiple projects. By storing them on an external file you don't have to re-write them every time you start a new analysis.
+Let's begin by importing the libraries we will need. On top of that, note how we are sourcing external files containing functions we will need later on. This is a common practice in case you have custom functions you need to use in multiple projects. By storing them on a external files you don't have to re-write the function every time you start a new project.
 
 ```{r libs}
 #| warning: false
@@ -68,22 +68,22 @@ head(data)
 
 ## Matrix Projection
 
-As we learned in the first part of the lab, we construct a **transition matrix** to determine how the landscape will change over 2 time periods. However, let's start by observing how the proportion of landscape classes varies over time to get a better sense of what we are dealing with.
+As we discussed in the first part of the lab, we construct a **transition matrix** to determine how the landscape will change over 2 time periods. However, let's start by observing how the proportion of landscape classes varies over time to get a better sense of what we are dealing with.
 
 ```{r proj}
 n_samples <- nrow(data)
 
 # 1972
 t1972 <- table(as.factor(data$y1972)) # tally of each cover type
-p1972 <- t1972/n_samples # proportion of each cover class
+p1972 <- t1972 / n_samples # proportion of each cover class
 
 # 1984
 t1984 <- table(as.factor(data$y1984))
-p1984 <- t1984/n_samples
+p1984 <- t1984 / n_samples
 
 # 1991
 t1991 <- table(as.factor(data$y1991))
-p1991 <- t1991/n_samples
+p1991 <- t1991 / n_samples
 ```
 
 As a second step, we initialize the **transition vector** using the proportion of cover types in the first year (1972). We then construct a matrix with the proportion of each cover type per year (@tbl-props).
@@ -129,7 +129,7 @@ It's now time to build our transition matrices for the years 1972 -> 1984 and 19
 
 We can then convert our transition matrix (i.e. a tally matrix of $n_{ij}$, @tbl-tm11) into proportions of cells of each cover type that changed into another cover type during that time interval ($P$, @tbl-tm12, @tbl-tm2). This should give us a better sense of how much of each class changed. Remember that the diagonal elements $p_{ii}$ are the class proportions that did not change.
 
-Let's build $P$ for each time internal. Here, we will use the function `rel` and `fix.steps` from the files we sourced earlier, which would help us streamline the build-up of the matrix $P$. Also, note that we are interested in extracting the transition matrix describing annual changes in class proportions. If we considered the change from 1972 to 1984, we would end up with a transition matrix describing changes over 12 years. To fix that, we have divide the off-diagonal cells ($p_{ij}$) by the original time frame (12 or 7 years) and adjust the diagonal elements to be $1 - \sum_{j = 1}^{n}p_{ij}$. That is, make sure the row sum is equal to 1.
+Let's build $P$ for each time internal. Here, we will use the function `rel` and `fix.steps` from the files we sourced earlier, which would help us streamline the building of the matrix $P$. Also, note that we are interested in extracting the transition matrix describing annual changes in class proportions. If we considered the change from 1972 to 1984, we would end up with a transition matrix describing changes over 12 years. To fix that, we have divide the off-diagonal cells ($p_{ij}$) by the original time frame (12 or 7 years) and adjust the diagonal elements to be $1 - \sum_{j = 1}^{n}p_{ij}$. That is, make sure the row sum is equal to 1.
 
 **1972-1984**
 
@@ -172,7 +172,7 @@ P8491 %>% round(3)
 
 At this point, we have everything we need to build our first-order Markov model! A first-order Markov model assumes that to predict the state of the system at time $t + 1$, one need only know the state of the system at time $t$ (@usher1992). The core of a Markov model is the transition matrix $P$, which summarizes the probability that a cell of cover type $i$ will change to cover type $j$ during a single timestep. The timestep is the interval over which the data were observed to change (i.e., the time interval of the two maps, in our case fixed to 1 year).
 
-To explore a Markov model, it is initialized with a state vector and then projected for one or more timesteps. The vector of cover types produced at each iteration is the prediction of overall landscape composition for that timestep. We start by building a matrix which will contain the proportion of classes for each year throughout the length of the projection (999 years).
+To explore a Markov model, we initialized a state vector and we'll then project that for one or more timesteps based on $P$. The vector of cover types produced at each iteration is the prediction of overall landscape composition for that timestep. We start by building a matrix which will contain the proportion of classes for each year throughout the length of the projection (999 years).
 
 ```{r transient}
 # build transition matrix for the whole projection
@@ -196,11 +196,10 @@ out <- data.frame(cbind(times, transient))
 out <- rbind(c(begin, inits), out)
 
 # create labels for the output columns:
-names(out)<-c("Year", paste("C", as.character(1:ntypes), sep=""))
+names(out) <- c("Year", paste("C", as.character(1:ntypes), sep=""))
 ```
 
 We now validate the model to make sure it's working as expected. To do that, we can have a quick look at the projection and overlay the actual class proportions we have for the 3 years. However, remember that this is not ideal because our projection runs for almost 1000 years! So, let's start plotting the actual projection for the year 1972 to 1995 and see what it looks like (@fig-valid).
-
 
 ```{r validate}
 #| fig-cap: "Simulated landscape class changes between 1972 and 1995. Points represent the actual cover type proportions in the years 1972, 1984, and 1991."
@@ -221,7 +220,7 @@ p1
 
 ***Question 1. How does the model perform compared to the data? Does this differ by timestep (1972-1984, 1984-1991)?***
 
-Now, let's observe the entire simulation until the year 2971 (@fig-sim).
+Below you can see the entire simulation until the year 2971 (end of the projection) (@fig-sim).
 
 ```{r simulation}
 #| fig-cap: "Simulated landscape class changes between 1972 and 2971."
@@ -236,9 +235,9 @@ p2
 
 ## Alternative Management Scenarios
 
-The power of the simulation does end here. For example, we can test how alternative management scenario may affect the class proportions in the long run. Imagine a new policy has implemented a reduction by half of the annual allowable cut. That mean we can only harvest as much as we did last year. What would happen to the class proportion in 1000 years?
+The power of the simulation does not end here. For example, we can test how alternative management scenario may affect the class proportions in the long run. Imagine a new policy has implemented a reduction by half of the annual allowable cut. That means we can only harvest half of what we did last year. What would happen to the class proportion in 1000 years?
 
-To do that, we have to manually adjust $P$ to reflect a reduction in the harvesting rate, and therefore an increase in initial proportions for the other cover types. In particular, let's assume that by reducing harvesting we would have higher initial mature and old growth classes. We can therefore adjust $P$ accordingly as follows (@tbl-alt1).
+To do that, we have to manually adjust $P$ to reflect a reduction in the harvesting rate, and therefore an increase in initial proportions for the other cover types. In particular, let's assume that by reducing harvesting we would have higher initial mature and old growth classes. We can therefore adjust $P$ accordingly, as follows (@tbl-alt1).
 
 
 ```{r alternative1}
@@ -340,9 +339,9 @@ ggplot() +
 
 # Part 3. Your turn!
 
-We explored the use of alternative management scenarios and how these affect the class proportions over time. For this part, run an alternative management scenario that allows you to retain *30% of old growth* forest at the end of the century. What other class proportions would you need to change in order to attain this management goal? Feel free to re-use the provided code or write your own implementation (whichever programming language you prefer).
+We explored the use of alternative management scenarios and how these affect the class proportions over time. For this part, run an alternative management scenario that allows you to retain **30% of old growth** forest at the end of the century. What other class proportions would you need to change in order to attain this management goal? Feel free to re-use the provided code or write your own implementation (whichever programming language you prefer).
 
-***Question 5. Upon completion of your scenarios, submit your plotted simulation. Briefly use bullet point to list what assumption you had to make when developing a simple first-order Markov model?***
+***Question 5. Upon completion of your scenarios, submit your plotted simulation. Briefly use bullet point to list what assumptions you had to make when developing a simple first-order Markov model?***
 
 # Conclusions
 
