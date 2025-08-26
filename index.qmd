@@ -334,7 +334,7 @@ ggplot() +
 
 ***Question 3. Based on the results of the first Markov model, do you think that the 1982-1984 rates of harvest are sustainable for old-growth forests?***
 
-***Question 4. Using 3 bullet points, what scenarios could be applied to a Markov model to incorporate more complex and realistic mechanisms of landscape change?***
+***Question 4. Using 3 bullet points, describe what additional conditions could be applied to a Markov model to represent more realistic landscape changes and why.***
 
 
 # Part 3. Your turn!
